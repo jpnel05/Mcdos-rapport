@@ -195,6 +195,7 @@ export async function POST(req) {
   <tr><td style="background:linear-gradient(135deg,#b91c1c,#ea580c);padding:20px 32px;text-align:center">
     <p style="color:#fff;font-size:13px;margin:0;font-weight:600">📍 McDonald's Alma &nbsp;|&nbsp; 🕒 ${dateStr} — ${timeStr}</p>
     <p style="color:rgba(255,255,255,0.8);font-size:12px;margin:6px 0 0">⭐ Ensemble, nous faisons la différence!</p>
+    <p style="color:rgba(255,255,255,0.6);font-size:11px;margin:8px 0 0">Développé par <strong style="color:#fff">JP De Guzman</strong></p>
   </td></tr>
 
 </table>
