@@ -1,4 +1,4 @@
-        export const runtime = 'nodejs';
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(req) {
@@ -192,10 +192,15 @@ export async function POST(req) {
     </table>
   </td></tr>
 
+  <tr><td style="padding:16px 32px">
+    <div style="background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:12px 16px;text-align:center">
+      <p style="margin:0;font-size:12px;color:#9ca3af">Application développée par <strong style="color:#ea580c">JP De Guzman</strong> 🍔</p>
+    </div>
+  </td></tr>
+
   <tr><td style="background:linear-gradient(135deg,#b91c1c,#ea580c);padding:20px 32px;text-align:center">
     <p style="color:#fff;font-size:13px;margin:0;font-weight:600">📍 McDonald's Alma &nbsp;|&nbsp; 🕒 ${dateStr} — ${timeStr}</p>
     <p style="color:rgba(255,255,255,0.8);font-size:12px;margin:6px 0 0">⭐ Ensemble, nous faisons la différence!</p>
-    <p style="color:rgba(255,255,255,0.6);font-size:11px;margin:8px 0 0">Développé par <strong style="color:#fff">JP De Guzman</strong></p>
   </td></tr>
 
 </table>
