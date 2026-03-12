@@ -1,5 +1,3 @@
-import { Resend } from 'resend';
-
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
@@ -12,6 +10,7 @@ export async function POST(req) {
     const shift    = formData.get('shift')    || '---';
     const date     = formData.get('date')     || '---';
     const email    = formData.get('email')    || '';
+    const senderEmail = formData.get('senderEmail') || '';
     const s_o = formData.get('s_o') || '---'; const s_r = formData.get('s_r') || '---';
     const f_o = formData.get('f_o') || '---'; const f_r = formData.get('f_r') || '---';
     const c_o = formData.get('c_o') || '---'; const c_r = formData.get('c_r') || '---';
@@ -59,7 +58,6 @@ export async function POST(req) {
     const timeStr = now.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' });
     const dateStr = fmtDate(date);
 
-    // Build equipment rows
     const equipRows = equips.filter(e => e.prob || e.action).map((e, i) => `
       <tr style="background:${i % 2 === 0 ? '#fff7ed' : '#fff'}; border-bottom:1px solid #e5e7eb">
         <td style="padding:13px 16px; vertical-align:top">
@@ -77,16 +75,6 @@ export async function POST(req) {
         <td colspan="2" style="padding:13px 16px;font-size:13px;color:#6b7280;text-align:center">✅ Aucun problème signalé ce quart</td>
       </tr>`;
 
-    // Handle photo attachments
-    const attachments = [];
-    const files = formData.getAll('photos');
-    for (const file of files) {
-      if (file && file.size > 0) {
-        const buffer = await file.arrayBuffer();
-        attachments.push({ filename: file.name, content: Buffer.from(buffer) });
-      }
-    }
-
     const html = `
 <!DOCTYPE html>
 <html lang="fr">
@@ -96,14 +84,12 @@ export async function POST(req) {
 <tr><td align="center">
 <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.10)">
 
-  <!-- HEADER -->
   <tr><td style="background:linear-gradient(135deg,#b91c1c,#ea580c);padding:32px 32px 24px;text-align:center">
     <div style="font-size:36px;margin-bottom:8px">🍔</div>
     <h1 style="color:#fff;font-size:24px;font-weight:900;margin:0;letter-spacing:1px">McDONALD'S ALMA</h1>
     <p style="color:rgba(255,255,255,0.85);font-size:15px;margin:6px 0 0;font-weight:600">RAPPORT DE QUART — ${shift.toUpperCase()}</p>
   </td></tr>
 
-  <!-- QUART INFO -->
   <tr><td style="padding:24px 32px 0">
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#fafafa;border-radius:10px;border:1px solid #e5e7eb;overflow:hidden">
       <tr style="border-bottom:1px solid #e5e7eb">
@@ -125,12 +111,10 @@ export async function POST(req) {
     </table>
   </td></tr>
 
-  <!-- PERFORMANCE TITLE -->
   <tr><td style="padding:24px 32px 12px">
     <h2 style="margin:0;font-size:16px;font-weight:800;color:#b91c1c;letter-spacing:1px;text-transform:uppercase;border-left:4px solid #b91c1c;padding-left:10px">📊 Performance du Quart</h2>
   </td></tr>
 
-  <!-- PERFORMANCE TABLE -->
   <tr><td style="padding:0 32px">
     <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:10px;overflow:hidden;border:1px solid #e5e7eb">
       <tr style="background:#111">
@@ -166,7 +150,6 @@ export async function POST(req) {
     </table>
   </td></tr>
 
-  <!-- SCORE -->
   <tr><td style="padding:16px 32px">
     <div style="background:#fef9f0;border:1px solid #fed7aa;border-radius:10px;padding:14px 18px">
       <div style="font-weight:800;font-size:15px;color:#111">🏆 SCORE FINAL : ${achieved} / ${total} objectifs atteints</div>
@@ -174,12 +157,10 @@ export async function POST(req) {
     </div>
   </td></tr>
 
-  <!-- ANALYSE TITLE -->
   <tr><td style="padding:8px 32px 12px">
     <h2 style="margin:0;font-size:16px;font-weight:800;color:#b91c1c;letter-spacing:1px;text-transform:uppercase;border-left:4px solid #b91c1c;padding-left:10px">🧠 Analyse du Quart</h2>
   </td></tr>
 
-  <!-- ANALYSE TABLE -->
   <tr><td style="padding:0 32px">
     <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:10px;overflow:hidden;border:1px solid #e5e7eb">
       <tr style="background:#f0fdf4;border-bottom:1px solid #e5e7eb">
@@ -201,19 +182,16 @@ export async function POST(req) {
     </table>
   </td></tr>
 
-  <!-- EQUIPEMENT TITLE -->
   <tr><td style="padding:24px 32px 12px">
     <h2 style="margin:0;font-size:16px;font-weight:800;color:#b91c1c;letter-spacing:1px;text-transform:uppercase;border-left:4px solid #b91c1c;padding-left:10px">🔧 Équipement</h2>
   </td></tr>
 
-  <!-- EQUIPEMENT TABLE -->
   <tr><td style="padding:0 32px 24px">
     <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:10px;overflow:hidden;border:1px solid #e5e7eb">
       ${equipSection}
     </table>
   </td></tr>
 
-  <!-- FOOTER -->
   <tr><td style="background:linear-gradient(135deg,#b91c1c,#ea580c);padding:20px 32px;text-align:center">
     <p style="color:#fff;font-size:13px;margin:0;font-weight:600">📍 McDonald's Alma &nbsp;|&nbsp; 🕒 ${dateStr} — ${timeStr}</p>
     <p style="color:rgba(255,255,255,0.8);font-size:12px;margin:6px 0 0">⭐ Ensemble, nous faisons la différence!</p>
@@ -225,14 +203,45 @@ export async function POST(req) {
 </body>
 </html>`;
 
-    const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
-      from: 'Rapport de Quart <onboarding@resend.dev>',
-      to: [email],
+    // Build recipients list
+    const toList = [{ email: email }];
+    if (senderEmail && senderEmail !== email) {
+      toList.push({ email: senderEmail });
+    }
+
+    // Handle photo attachments
+    const attachments = [];
+    const files = formData.getAll('photos');
+    for (const file of files) {
+      if (file && file.size > 0) {
+        const buffer = await file.arrayBuffer();
+        const base64 = Buffer.from(buffer).toString('base64');
+        attachments.push({ name: file.name, content: base64 });
+      }
+    }
+
+    // Send via Brevo
+    const brevoPayload = {
+      sender: { name: "Rapport de Quart – McDonald's Alma", email: "noreply@smtp-brevo.com" },
+      to: toList,
       subject: `Rapport de Quart – McDonald's Alma | ${shift} | ${date}`,
-      html,
-      attachments,
+      htmlContent: html,
+    };
+    if (attachments.length > 0) brevoPayload.attachment = attachments;
+
+    const brevoRes = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': process.env.BREVO_API_KEY,
+      },
+      body: JSON.stringify(brevoPayload),
     });
+
+    if (!brevoRes.ok) {
+      const err = await brevoRes.text();
+      throw new Error(err);
+    }
 
     return Response.json({ success: true });
   } catch (err) {
