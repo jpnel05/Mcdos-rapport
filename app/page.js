@@ -19,7 +19,7 @@ const emptyEquip = () => ({ prob: '', action: '' });
 export default function Page() {
   const today = new Date().toISOString().split('T')[0];
   const [form, setForm] = useState({
-    leader: '', manager: '', shift: 'Souper', date: today, email: '',
+    leader: '', manager: '', shift: 'Souper', date: today, email: '', senderEmail: '',
     s_o: '', s_r: '', f_o: '', f_r: '', c_o: '', c_r: '', r_o: '', r_r: '',
     well: '', prob: '', act: '', endorse: '',
   });
@@ -40,7 +40,8 @@ export default function Page() {
 
   async function handleSubmit() {
     if (!form.leader) { setResult({ ok: false, msg: '⚠️ Veuillez entrer le nom du leader.' }); return; }
-    if (!form.email) { setResult({ ok: false, msg: '⚠️ Veuillez entrer le courriel du destinataire.' }); return; }
+    if (!form.email) { setResult({ ok: false, msg: '⚠️ Veuillez entrer le courriel du gérant.' }); return; }
+    if (!form.senderEmail) { setResult({ ok: false, msg: '⚠️ Veuillez entrer votre courriel personnel.' }); return; }
     setSending(true); setResult(null);
     try {
       const fd = new FormData();
@@ -85,7 +86,8 @@ export default function Page() {
           </div>
           <div><label className={lbl}>DATE</label><input type="date" className={inp} value={form.date} onChange={e => set('date', e.target.value)} /></div>
         </div>
-        <div><label className={lbl}>COURRIEL DU DESTINATAIRE</label><input type="email" className={inp} value={form.email} onChange={e => set('email', e.target.value)} placeholder="gerant@mcdonalds.com" /></div>
+        <div className="mb-3"><label className={lbl}>📧 COURRIEL DU GÉRANT (destinataire)</label><input type="email" className={inp} value={form.email} onChange={e => set('email', e.target.value)} placeholder="gerant@mcdonalds.com" /></div>
+        <div><label className={lbl}>📧 VOTRE COURRIEL (copie pour vous)</label><input type="email" className={inp} value={form.senderEmail} onChange={e => set('senderEmail', e.target.value)} placeholder="votre@email.com" /></div>
       </div>
 
       {/* PERFORMANCE */}
@@ -145,7 +147,7 @@ export default function Page() {
         ))}
       </div>
 
-      {/* EQUIPEMENT — up to 3 items */}
+      {/* EQUIPEMENT */}
       <div className="mx-4 mt-4 bg-[#141414] border border-[#222] rounded-xl p-4">
         <div className="text-orange-500 font-black text-xs font-mono tracking-widest mb-3">🔧 ÉQUIPEMENT</div>
         {equips.map((eq, i) => (
@@ -158,7 +160,7 @@ export default function Page() {
             </div>
             <div className="mb-2">
               <label className={lbl}>⚠️ PROBLÈME</label>
-              <textarea className={inp} rows={2} placeholder="ex: Friteuse #2 — température instable&#10;Aucun problème ce quart" value={eq.prob} onChange={e => setEquip(i, 'prob', e.target.value)} style={{ resize: 'vertical' }} />
+              <textarea className={inp} rows={2} placeholder="ex: Friteuse #2 — température instable" value={eq.prob} onChange={e => setEquip(i, 'prob', e.target.value)} style={{ resize: 'vertical' }} />
             </div>
             <div>
               <label className={lbl}>🛠️ ACTION PRISE</label>
