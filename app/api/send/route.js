@@ -222,7 +222,7 @@ export async function POST(req) {
 
     // Send via Brevo
     const brevoPayload = {
-      sender: { name: "Rapport de Quart – McDonald's Alma", email: "noreply@smtp-brevo.com" },
+      sender: { name: "Rapport de Quart – McDonald's Alma", email: "deguzmanjohnpatrick02@gmail.com" },
       to: toList,
       subject: `Rapport de Quart – McDonald's Alma | ${shift} | ${date}`,
       htmlContent: html,
